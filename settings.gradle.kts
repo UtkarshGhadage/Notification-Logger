@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Notification Logger"
 include(":app")
+ 
