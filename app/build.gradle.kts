@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     kotlin("jvm") version "1.9.21" apply false
+    kotlin("kapt") version "1.9.21"
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -17,6 +19,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                    "room.schemaLocation" to "$projectDir/schemas",
+                    "room.incremental" to "true"
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -49,6 +60,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.21-1.0.15")
+    implementation ("com.google.code.gson:gson:2.8.5")
+
 
 
     val room_version = "2.6.1"
@@ -56,7 +69,9 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
 
-    // To use Kotlin Symbol Processing (KSP)
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
+    // To use Kotlin Symbol Processing (KSP
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
@@ -76,9 +91,40 @@ dependencies {
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
 
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    // retrofit
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
+// GSON
+
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+// coroutine
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.2")
+
+    dependencies {
+        implementation("com.google.dagger:hilt-android:2.44")
+        kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+        // OPTIONAL: For instrumentation tests
+        androidTestImplementation("com.google.dagger:hilt-android-testing:2.44.2")
+        kaptAndroidTest("com.google.dagger:hilt-compiler:2.44.2")
+
+        // OPTIONAL: For local unit tests
+        testImplementation("com.google.dagger:hilt-android-testing:2.44.2")
+        kaptTest("com.google.dagger:hilt-compiler:2.44.2")
+    }
+
+    // WorkManager dependency
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
+}
+
+kapt {
+    correctErrorTypes = true
 }

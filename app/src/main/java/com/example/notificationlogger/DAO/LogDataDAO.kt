@@ -1,25 +1,22 @@
 package com.example.notificationlogger.DAO
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.notificationlogger.Models.LogDataModel
+import com.example.notificationlogger.Models.LogData
 
 @Dao
-public interface LogDataDAO {
+interface LogDataDAO {
+    @Query("SELECT * FROM log_db ")
+    fun getAll(): List<LogData>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertData(data: LogDataModel): Long
+    @Query("SELECT * FROM log_db WHERE id IN (:ids)")
+    fun loadAllByIds(ids : LongArray): List<LogData>
 
-    @Query("SELECT * FROM LogTable WHERE id = :id")
-    suspend fun getDataById(id: Int): LogDataModel?
+    @Insert
+    fun insertAll(data: LogData)
 
-    @Query("DELETE FROM LogTable WHERE id = :id")
-    suspend fun deleteData(id: Int): Int
-
-    @Query("SELECT * FROM LogTable")
-    suspend fun getAllData(): List<LogDataModel>
-
-
+    @Delete
+    fun delete(user: LogData)
 }

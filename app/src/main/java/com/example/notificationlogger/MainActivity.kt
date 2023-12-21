@@ -6,7 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.notificationlogger.Retrofit.RetrofitBuilder
+import com.example.notificationlogger.Retrofit.RetrofitInterface
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +25,16 @@ class MainActivity : AppCompatActivity() {
 
         isNotificationPermissionGranted()
         startNotificationLoggerService()
+
+        val dataApi = RetrofitBuilder.getInstance().create(RetrofitInterface::class.java)
+        // launching a new coroutine
+        GlobalScope.launch{
+            var result = dataApi.getData()
+
+            if (result != null)
+            // Checking the results
+                Log.d("LOGGGGG: ", result.toString())
+        }
 
     }
 
