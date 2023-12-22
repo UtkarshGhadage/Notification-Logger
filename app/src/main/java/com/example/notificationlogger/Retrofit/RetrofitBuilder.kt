@@ -8,8 +8,11 @@ object RetrofitBuilder {
     val baseUrl = "http://10.0.2.2:4000"
 
     fun getInstance(): Retrofit {
+
         return Retrofit.Builder().baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory( GsonConverterFactory.create())
             .build()
+
+//        GsonConverterFactory.create(),MoshiConverterFactory.create(moshi)
     }
 }

@@ -1,6 +1,10 @@
+
+
 data class DataModel(
-    
-    val name: String?,
-    val age: Int?,
-    val college: String?
+
+    var id: Long,
+    val timestamp: String?,
+    val title: String?,
+    val text: String?,
+    val packageName: String?,
 )

@@ -9,14 +9,21 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.example.notificationlogger.Database.LogDatabase
 import com.example.notificationlogger.Models.LogData
 import com.google.gson.Gson
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
 
-class NotificationLoggerService : NotificationListenerService() {
+@AndroidEntryPoint
+class NotificationLoggerService: NotificationListenerService() {
 
     private val TAG = "LOG.D"
     private val CHANNEL_ID = "notification_logger_channel"
@@ -77,16 +84,22 @@ class NotificationLoggerService : NotificationListenerService() {
             Log.d(TAG, "**Notification posted**")
 
             //Extras, SBN and Notification Props
-            var mapExtras: String = ""
+            var mapExtras: String? = ""
             var mapSbn: String = ""
             var mapNotifs: String = ""
 
             try {
+
+                val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+
+
                 mapExtras = Gson().toJson(extras)
                 mapSbn = Gson().toJson(sbn)
                 mapNotifs = Gson().toJson(mNotification)
-            }catch (e:IllegalArgumentException){
-                Log.d(TAG,"IllegalArgumentException in JSON")
+
+            } catch (e: IllegalArgumentException) {
+                Log.d(TAG, "IllegalArgumentException in JSON")
             }
 
 //
@@ -109,10 +122,10 @@ class NotificationLoggerService : NotificationListenerService() {
             try {
                 //mapNoitifs
                 jsonObjectNotifs = JSONObject(mapNotifs)
-                whenTime= jsonObjectNotifs.getLong("when")
+                whenTime = jsonObjectNotifs.getLong("when")
                 Log.d(TAG, "timestamp from Nofifs: $whenTime")
-            }catch (e: JSONException){
-                Log.d(TAG,"Exception in JSON")
+            } catch (e: JSONException) {
+                Log.d(TAG, "Exception in JSON")
             }
 
 
@@ -121,9 +134,9 @@ class NotificationLoggerService : NotificationListenerService() {
             var jsonObjectExtras: JSONObject? = JSONObject()
 
             try {
-                jsonObjectExtras= JSONObject(mapExtras)
-            }catch (e: JSONException){
-                Log.d(TAG,"Exception in JSON")
+                jsonObjectExtras = JSONObject(mapExtras)
+            } catch (e: JSONException) {
+                Log.d(TAG, "Exception in JSON")
             }
 
 
@@ -144,7 +157,7 @@ class NotificationLoggerService : NotificationListenerService() {
                 Log.e("JSON_ERROR", "Error parsing JSON: $e")
             }
 
-            // Extracting android.title conditions
+            // Extracting android.title from Extras
 
             var titleFinal: String? = ""
             try {
@@ -156,7 +169,7 @@ class NotificationLoggerService : NotificationListenerService() {
                     titleFinal = titleValue
                 } else if (titleValue is JSONObject) {
                     // It's an object, dig deeper to extract the "mText" value
-                    titleFinal = titleValue.getString("mMap")
+                    titleFinal = titleValue.getString("mText")
 
                 }
             } catch (e: JSONException) {
@@ -170,7 +183,7 @@ class NotificationLoggerService : NotificationListenerService() {
             try {
                 jsonObjectPkg = JSONObject(mapSbn)
                 pkg = jsonObjectPkg.getString("pkg")
-            }catch (e: JSONException){
+            } catch (e: JSONException) {
                 Log.e("JSON_ERROR", "Error parsing JSON: $e")
             }
 
@@ -199,10 +212,17 @@ class NotificationLoggerService : NotificationListenerService() {
                 )
             )
 
-            processedNotifications.clear()
 
+            val periodicWorkRequest = PeriodicWorkRequest.Builder(DataSavingWorker::class.java, 15, TimeUnit.MINUTES)
+                .build()
+            WorkManager.getInstance(applicationContext).enqueue(periodicWorkRequest)
+
+
+            Log.d("ROOMDATA", "${dataDao.getAll().toString()}")
             stopForeground(Service.STOP_FOREGROUND_REMOVE)
 
         }
+
+
     }
 }

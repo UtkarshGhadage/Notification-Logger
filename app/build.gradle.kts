@@ -102,13 +102,13 @@ dependencies {
 
 // coroutine
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     dependencies {
-        implementation("com.google.dagger:hilt-android:2.44")
+        implementation("com.google.dagger:hilt-android:2.44.2")
         kapt("com.google.dagger:hilt-android-compiler:2.44")
 
         // OPTIONAL: For instrumentation tests
@@ -122,6 +122,24 @@ dependencies {
 
     // WorkManager dependency
     implementation ("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+    implementation("com.squareup.moshi:moshi:1.14.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    //moshi
+
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+
+//retrofit
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+
 
 }
 

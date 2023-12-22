@@ -12,11 +12,12 @@ interface LogDataDAO {
     fun getAll(): List<LogData>
 
     @Query("SELECT * FROM log_db WHERE id IN (:ids)")
-    fun loadAllByIds(ids : LongArray): List<LogData>
+    fun loadAllByIds(ids: LongArray): List<LogData>
 
     @Insert
     fun insertAll(data: LogData)
 
     @Delete
     fun delete(user: LogData)
+
 }
