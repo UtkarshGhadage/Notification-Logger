@@ -8,10 +8,10 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 
+interface RetrofitInterface {
+    @GET("/")
+    suspend fun getData(): List<DataModel>
 
-interface RetrofitInterface{
-        @GET("/")
-        suspend fun getData() : List<DataModel>
-        @POST("/create")
-        suspend fun insertData(@Body data: DataModel): Response<String>
+    @POST("/create")
+    suspend fun insertData(@Body data: DataModel): Response<String>
 }

@@ -2,6 +2,7 @@ package com.example.notificationlogger
 
 import DataModel
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.notificationlogger.Database.LogDatabase
@@ -10,24 +11,24 @@ import com.example.notificationlogger.Retrofit.RetrofitInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
-class DataSavingWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+@HiltWorker
+class DataSavingWorker (context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+
+    @Inject
+    lateinit var mRetrofit : RetrofitBuilder
     override fun doWork(): Result {
-
-        // Simulate obtaining context asynchronously
-
         val ctx = NotificationLoggerService()
 
-        // Get data from database
-        if(ctx != null) {
+        if(ctx != null && ::mRetrofit.isInitialized) {
 
             val instance = LogDatabase.getInstance(ctx)
             val dataDao = instance.logDao()
 
-            // Perform Retrofit calls for each log
-
-            val dataApi = RetrofitBuilder.getInstance().create(RetrofitInterface::class.java)
+//            val dataApi = RetrofitBuilder.getInstance().create(RetrofitInterface::class.java)
+            val dataApi = mRetrofit.getInstance().create(RetrofitInterface::class.java)
 
             var logDataModel = dataDao.getAll()
             for (log in logDataModel) {

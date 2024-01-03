@@ -6,9 +6,12 @@ import androidx.room.RoomDatabase
 import com.example.notificationlogger.DAO.LogDataDAO
 import com.example.notificationlogger.Models.LogData
 import com.example.notificationlogger.NotificationLoggerService
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-
-@Database(entities = [LogData::class], version = 1)
+@Database(entities = [LogData::class], version = 1, exportSchema = false)
 abstract class LogDatabase : RoomDatabase() {
     abstract fun logDao(): LogDataDAO
 

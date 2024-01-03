@@ -23,7 +23,8 @@ import java.util.concurrent.TimeUnit
 
 
 @AndroidEntryPoint
-class NotificationLoggerService: NotificationListenerService() {
+class NotificationLoggerService : NotificationListenerService() {
+
 
     private val TAG = "LOG.D"
     private val CHANNEL_ID = "notification_logger_channel"
@@ -213,13 +214,22 @@ class NotificationLoggerService: NotificationListenerService() {
             )
 
 
-            val periodicWorkRequest = PeriodicWorkRequest.Builder(DataSavingWorker::class.java, 15, TimeUnit.MINUTES)
-                .build()
+            val periodicWorkRequest = PeriodicWorkRequest.Builder(
+                DataSavingWorker::class.java, 15, TimeUnit.MINUTES
+            ).build()
             WorkManager.getInstance(applicationContext).enqueue(periodicWorkRequest)
 
 
+//            val workManager = WorkManager.getInstance(applicationContext)
+//
+//            val workRequest = PeriodicWorkRequestBuilder<DataSavingWorker>(15, TimeUnit.MINUTES)
+//                .build()
+//
+//            workManager.enqueue(workRequest)
+
             Log.d("ROOMDATA", "${dataDao.getAll().toString()}")
             stopForeground(Service.STOP_FOREGROUND_REMOVE)
+            Log.d("INVOCATION", "Foreground Service Stopped")
 
         }
 

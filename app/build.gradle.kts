@@ -1,13 +1,108 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.gms.google-services")
-    kotlin("jvm") version "1.9.21" apply false
-    kotlin("kapt") version "1.9.21"
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.jetbrains.kapt.android)
+    alias(libs.plugins.ksp.android)
+    alias(libs.plugins.hilt.android.gradle)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
+
+}
+
+hilt {
+    enableAggregatingTask = true
+}
+
+dependencies {
+    implementation(libs.hilt.android)
+    androidTestImplementation("junit:junit:4.12")
+    ksp(libs.hilt.android.compiler)
+
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
+
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation("com.google.android.material:material:1.11.0")
+//    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.livedata)
+    implementation(libs.androidx.lifecycle.compose)
+    implementation(libs.androidx.browser.browser)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
+//    implementation(libs.androidx.room.ktx)
+//    implementation(libs.androidx.room.compiler)
+//    implementation(libs.androidx.room.runtime)
+
+
+    implementation(libs.androidx.work.runtime.ktx)
+//    implementation(libs.google.firebase.bom)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.google.play.services.auth)
+    implementation(libs.gson)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.android.compiler)
+    implementation(libs.material)
+    implementation(libs.squareup.converter.moshi)
+    implementation(libs.squareup.logging.interceptor)
+    implementation(libs.squareup.moshi.kotlin)
+    implementation(libs.test.androidx.work)
+    implementation(libs.test.androidx.core)
+    implementation(libs.test.androidx.core.ktx)
+    implementation(libs.test.kotlinx.coroutines)
+    implementation(libs.test.mockito.kotlin)
+
+//    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
+
+
+
+    dependencies {
+        val room_version = "2.6.1"
+
+        implementation("androidx.room:room-runtime:$room_version")
+        annotationProcessor("androidx.room:room-compiler:$room_version")
+
+        // To use Kotlin annotation processing tool (kapt)
+//        kapt("androidx.room:room-compiler:$room_version")
+        // To use Kotlin Symbol Processing (KSP)
+        ksp("androidx.room:room-compiler:$room_version")
+
+        // optional - Kotlin Extensions and Coroutines support for Room
+        implementation("androidx.room:room-ktx:$room_version")
+
+        // optional - RxJava2 support for Room
+        implementation("androidx.room:room-rxjava2:$room_version")
+
+        // optional - RxJava3 support for Room
+        implementation("androidx.room:room-rxjava3:$room_version")
+
+        // optional - Guava support for Room, including Optional and ListenableFuture
+        implementation("androidx.room:room-guava:$room_version")
+
+        // optional - Test helpers
+        testImplementation("androidx.room:room-testing:$room_version")
+
+        // optional - Paging 3 Integration
+        implementation("androidx.room:room-paging:$room_version")
+    }
+
 }
 
 android {
+
+    packaging {
+        resources {
+            excludes += "/META-INF/*"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+
     namespace = "com.example.notificationlogger"
     compileSdk = 34
 
@@ -28,11 +123,16 @@ android {
                 )
             }
         }
+
+        defaultConfig {
+            multiDexEnabled = true
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+//            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -46,103 +146,5 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
 
-dependencies {
-
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.firebase:firebase-firestore:24.10.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.9.21-1.0.15")
-    implementation ("com.google.code.gson:gson:2.8.5")
-
-
-
-    val room_version = "2.6.1"
-
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-
-    // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
-    // To use Kotlin Symbol Processing (KSP
-
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
-
-    // optional - RxJava2 support for Room
-    implementation("androidx.room:room-rxjava2:$room_version")
-
-    // optional - RxJava3 support for Room
-    implementation("androidx.room:room-rxjava3:$room_version")
-
-    // optional - Guava support for Room, including Optional and ListenableFuture
-    implementation("androidx.room:room-guava:$room_version")
-
-    // optional - Test helpers
-    testImplementation("androidx.room:room-testing:$room_version")
-
-    // optional - Paging 3 Integration
-    implementation("androidx.room:room-paging:$room_version")
-
-
-    // retrofit
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-
-// GSON
-
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-// coroutine
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-
-    dependencies {
-        implementation("com.google.dagger:hilt-android:2.44.2")
-        kapt("com.google.dagger:hilt-android-compiler:2.44")
-
-        // OPTIONAL: For instrumentation tests
-        androidTestImplementation("com.google.dagger:hilt-android-testing:2.44.2")
-        kaptAndroidTest("com.google.dagger:hilt-compiler:2.44.2")
-
-        // OPTIONAL: For local unit tests
-        testImplementation("com.google.dagger:hilt-android-testing:2.44.2")
-        kaptTest("com.google.dagger:hilt-compiler:2.44.2")
-    }
-
-    // WorkManager dependency
-    implementation ("androidx.work:work-runtime-ktx:2.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-
-    implementation("com.squareup.moshi:moshi:1.14.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-
-    //moshi
-
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
-
-//retrofit
-    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-
-    implementation("com.google.dagger:hilt-android:2.44.2")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-
-
-}
-
-kapt {
-    correctErrorTypes = true
 }
